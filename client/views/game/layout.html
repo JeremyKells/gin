@@ -1,0 +1,87 @@
+<template name="gameLayout">
+  <!-- <img src="/images/classic-playing-cards.png" id="sprite"> -->
+
+  {{> loginButtons}}
+  <div class='flex-container column'>
+
+    <h1>Your opponent is {{opponent_name}}.            It's {{whosTurn}}</h1>
+    {{>opponent_hand}}
+
+    <br><br>
+    {{> cardTable}}
+    <br><br>
+
+    {{> player_hand}}
+
+    <!-- <h1>Game: {{your_name}}</h1> -->
+
+  </div>
+
+</template>
+
+
+
+<template name="cardTable">
+
+  <div class="flex-container">
+
+    <div class='wrapcard deck'>
+      Remaining Deck
+      <div class="playingCards">
+        <div class="card back">*</div>
+      </div>
+    </div>
+     {{#each discard}}  <!-- Only one in collection, but #each handles situation when there is none cleanly -->
+      <div class='wrapcard discard'>
+        Discards
+        <div class="playingCards">
+          <div class="card rank-{{rank}} {{suit}}">
+              <span class="rank">{{rank}}</span>
+              <span class="suit">{{{suitSymbol}}}</span>
+          </div>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+
+</template>
+
+
+
+<template name="opponent_hand">
+  <div class="playingCards rotateHand ">
+    <ul class="opponent hand">
+      <div class="card back">*</div>
+      <div class="card back">*</div>
+      <div class="card back">*</div>
+      <div class="card back">*</div>
+      <div class="card back">*</div>
+      <div class="card back">*</div>
+      <div class="card back">*</div>
+      <div class="card back">*</div>
+      <div class="card back">*</div>
+      <div class="card back">*</div>
+    </ul>
+  </div>
+</template>
+
+
+<template name="player_hand">
+  <div class="playingCards hand rotateHand">
+    <ul class="table">
+      <ul id="sortable">
+        {{#each playerCards}}
+            {{> card}}
+        {{/each}}
+  </ul></ul></div>
+</template>
+
+
+<template name="card">
+  <li class='sort ui-state-default'>
+    <div class="card playerhand rank-{{rank}} {{suit}}">
+        <span class="rank">{{rank}}</span>
+        <span class="suit">{{{suitSymbol}}}</span>
+    </div>
+  </li>
+</template>

@@ -1,1 +1,44 @@
 /* CSS declarations go here */
+
+.flex-container {
+  display: flex;
+  /*justify-content:         space-around;*/
+  justify-content: center;
+}
+
+.column{
+  flex-direction: column;
+}
+
+.child {
+  margin: auto;  /* Magic! */
+}
+
+
+.opponent.hand > .card.back {
+  /*margin-right: -2em;*/
+  margin: 0 3px 3px 3px;
+  font-size: 1.4em;
+  height: 6.2em;
+  width: 3.3em;
+}
+
+#sortable {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+#sortable li {
+  margin: 0 3px 3px 3px;
+  font-size: 1.4em;
+  height: 6.2em;
+  width: 3.3em;
+}
+
+div.card > span.suit{
+  /*margin-left: 0;
+  margin-top: 0;
+  position: static;*/
+}

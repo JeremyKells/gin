@@ -1,11 +1,10 @@
 <template name="game">
   <div class='game'>
-    Game
     {{#if waiting}}
       Waiting for opponent ({{opponent}}) <button class="cancelButton">Cancel</button>
     {{/if}}
     {{#if proposal}}
-      {{proposer}} wants to play.  <button class="acceptButton">Accept</button> <button class="declineButton">Decline</button>
+      {{proposer}} wants to play Gin Rummy.  <button class="acceptButton">Accept</button> <button class="declineButton">Decline</button>
     {{/if}}
     {{#if accepted}}
       Game Starting

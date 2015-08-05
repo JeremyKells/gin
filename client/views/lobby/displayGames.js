@@ -1,8 +1,7 @@
 Template.displayGames.events({
   'click button.startGame': function () {
-    // increment the counter when button is clicked
     dataObject = {};
-    Meteor.call("startGame", dataObject, function(error, result){
+    Meteor.call("createGame", dataObject, function(error, result){
       if(error){
         console.log("error", error);
       }

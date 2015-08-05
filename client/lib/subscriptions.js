@@ -1,3 +1,2 @@
 Meteor.subscribe('userPresence');
-
-Meteor.subscribe('games', Meteor.userId());
+Meteor.subscribe('games');
