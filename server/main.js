@@ -33,13 +33,33 @@ Meteor.methods({
     });
     deck = _.shuffle(deck);
 
+    var val = function(i){
+      n = parseInt(i);
+      if (isNaN(n)){
+        if(i === 'a'){
+          return 1;
+        }
+        if(i === 'j'){
+          return 11;
+        }
+        if(i === 'q'){
+          return 12;
+        }
+        if(i === 'k'){
+          return 13;
+        }
+      }
+      return n;
+    };
+
     takeCard = function(hand){
       var card = deck.pop();
       Cards.insert({gameId: _id,
                     hand: hand,
                     position: i,    // i is coming from outside this scope, probably should fix.
                     suit: card.suit,
-                    rank: card.rank
+                    rank: card.rank,
+                    val: val(card.rank)
                     });
     };
 
@@ -114,5 +134,11 @@ Meteor.methods({
                 };
     Games.insert(newGame);
     return true;
-  }
+  },
+
+  deleteGame: function(gameId){
+    Cards.remove({gameId:gameId});
+    Games.remove({_id:gameId});
+  },
+
 });

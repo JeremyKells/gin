@@ -2,6 +2,9 @@
   <!-- <img src="/images/classic-playing-cards.png" id="sprite"> -->
 
   {{> loginButtons}}
+
+  <button class="btn btn-default" id="deletegame">Delete Game</button>
+  <button class="btn btn-default" id="gotoLobby">back to lobby</button>
   <div class='flex-container column'>
 
     <h1>Your opponent is {{opponent_name}}.            It's {{whosTurn}}</h1>
@@ -12,6 +15,7 @@
     <br><br>
 
     {{> player_hand}}
+
 
     <!-- <h1>Game: {{your_name}}</h1> -->
 
@@ -73,7 +77,13 @@
         {{#each playerCards}}
             {{> card}}
         {{/each}}
-  </ul></ul></div>
+      </ul>
+    </ul>
+  </div>
+
+  <div>
+    {{valCards}}
+  </div>
 </template>
 
 
