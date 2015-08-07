@@ -1,6 +1,6 @@
 Cards = new Mongo.Collection("cards");
 
-Cards.allow({
+Cards.deny({
   insert: function(){
     return true;
   },

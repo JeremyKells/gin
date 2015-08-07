@@ -1,6 +1,6 @@
 Games = new Mongo.Collection("games");
 
-Games.allow({
+Games.deny({
   insert: function(){
     return true;
   },

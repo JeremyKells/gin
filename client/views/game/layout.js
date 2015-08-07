@@ -13,10 +13,6 @@ Template.gameLayout.events({
     }, 1000);
 
   },
-  "click #gotoLobby": function(){
-    console.log("gotoLobby");
-    Router.go('/lobby');
-  },
 });
 
 
@@ -150,7 +146,11 @@ handValue = function(melded, cards){
 
 Template.player_hand.helpers({
   playerCards: function(){
-    return Cards.find({hand: Meteor.userId()}, {sort: {position: 1}});
+    cards = Cards.find({hand: Meteor.userId()}, {sort: {position: 1}});
+    if(cards.fetch().length === 0){
+      Router.go('/lobby');
+    }
+    return cards;
   },
   numCards: function(){
     return Session.get('numCards');
@@ -187,7 +187,7 @@ Template.player_hand.rendered = function () {
         } else{
           newPosition = ( Blaze.getData(before).position +  Blaze.getData(after).position ) / 2.0;
         }
-        Cards.update({_id: Blaze.getData(el)._id}, {$set: {position: newPosition}});
+        Meteor.call('sort_stop', Blaze.getData(el)._id, newPosition);
     },
 
   });

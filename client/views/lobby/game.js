@@ -27,8 +27,6 @@ Template.game.helpers({
 
 Template.game.events({
   "click .acceptButton": function(event, template){
-    Games.update(this._id, { $set:{
-                  status: 'accepted' }});
     Meteor.call("startGame", this._id, function(error, result){
       console.log("startGame returned (error, result): " + error + ' / ' + result);
 
@@ -42,11 +40,13 @@ Template.game.events({
 
   },
   "click .declineButton": function(event, template){
-    Games.remove(this._id);  // TODO: Change to Meteor.method, transitons
-
+    // TODO, transitons
+    Meteor.call('deleteGame', this._id);
   },
   "click .cancelButton": function(event, template){
-    Games.remove(this._id);  // TODO: Change to Meteor.method, transitons
+    // TODO, transitons
+    Meteor.call('deleteGame', this._id);
   },
+
 
 });

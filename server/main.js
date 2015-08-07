@@ -20,6 +20,15 @@
 
 Meteor.methods({
 
+  sort_stop: function(card_id, newPosition){
+    Cards.update({_id: card_id}, {$set: {position: newPosition}});
+  },
+
+
+  deleteGame: function(_id){
+      Games.remove(_id);
+  },
+
   startGame: function(_id){
     // Shuffle cards, 10 to each player, one to discard pile, rest to deck  - all arrays in game object
     // Mark one player as current turn.
@@ -75,14 +84,9 @@ Meteor.methods({
       takeCard('deck');
     }
 
-    // var hand1 = [];
-    // var hand2 = [];
-    // for (i=0; i<10; i++){
-    //   hand1.push(deck.pop());
-    //   hand2.push(deck.pop());
-    // }
-    // var discard = [];
-    // discard.push(deck.pop());
+    Games.update(_id, { $set:{
+                  status: 'accepted' }});
+
   },
 
   pickupDiscard: function(){
