@@ -1,3 +1,7 @@
+Router.configure({
+    layoutTemplate: 'mainLayout'
+});
+
 Router.route('/lobby');
 Router.route('/', {
     template: 'lobby'

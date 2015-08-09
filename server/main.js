@@ -20,10 +20,25 @@
 
 Meteor.methods({
 
+  knock: function(_id){
+    console.log("knock");
+
+    //Calculate score, update result
+
+    /*{ createdBy_points: 10,
+    createdBy_bonus: 25,
+    opponent_points: 0,
+    opponent_bonus: 0,
+    result: 'Gin' }*/
+
+    Games.update(_id, { $set:{
+                  knocked: this.userId,
+                  status: 'endgame' }});
+  },
+
   sort_stop: function(card_id, newPosition){
     Cards.update({_id: card_id}, {$set: {position: newPosition}});
   },
-
 
   deleteGame: function(_id){
       Games.remove(_id);
@@ -85,7 +100,8 @@ Meteor.methods({
     }
 
     Games.update(_id, { $set:{
-                  status: 'accepted' }});
+                  status: 'accepted',
+                  result: [] }});
 
   },
 
@@ -109,18 +125,21 @@ Meteor.methods({
 
   discard: function(_id){
     // Check it's appropriate at this point
-    var discards = Cards.find({hand: 'discard'}).fetch();
-    var discardPosition = discards.length;  // probably cheaper to cache
-    Cards.update(_id, { $set: { hand: 'discard', position: discards.length } });
+    var cards = Cards.find({hand: this.userId}).fetch();
+    if(cards.length === 11){
+      var discards = Cards.find({hand: 'discard'}).fetch();
+      var discardPosition = discards.length;  // probably cheaper to cache
+      Cards.update(_id, { $set: { hand: 'discard', position: discards.length } });
 
-    // Rotate turn
-    var game = Games.find(discards[0].gameId).fetch()[0];
-    if (game.turn === game.createdBy_id ){
-      Games.update(game._id, { $set: {turn: game.opponent_id }});
-    } else {
-      Games.update(game._id, { $set: {turn: game.createdBy_id }});
+      // Rotate turn
+      var game = Games.find(discards[0].gameId).fetch()[0];
+      if (game.turn === game.createdBy_id ){
+        Games.update(game._id, { $set: {turn: game.opponent_id }});
+      } else {
+        Games.update(game._id, { $set: {turn: game.createdBy_id }});
+      }
+    }else{ throw new Meteor.Error(403, 'Cannot discard');
     }
-
   },
 
   createGame: function(){

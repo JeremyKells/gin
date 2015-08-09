@@ -1,18 +1,27 @@
 <template name="gameLayout">
   <!-- <img src="/images/classic-playing-cards.png" id="sprite"> -->
 
-  {{> loginButtons}}
+
+  {{> scoreboard}}
+
+  {{> loginButtons}} vs {{opponent_name}}
 
   <button class="btn btn-default" id="deletegame">Delete Game</button>
-  <div class='flex-container column'>
-
-    <h1>Your opponent is {{opponent_name}}.            It's {{whosTurn}}</h1>
+    <div class='flex-container column'>
+  <div id="name">
+    <h1>It's {{whosTurn}}</h1>
+  </div>
     {{>opponent_hand}}
 
     <br><br>
     {{> cardTable}}
     <br><br>
-
+    {{#if canknock}}
+      <div class='flex-container' id="name">
+        <button class="btn btn-success danger" id="knock">Knock</button>
+      </div>
+      <br><br>
+    {{/if}}
     {{> player_hand}}
 
 
@@ -29,14 +38,12 @@
   <div class="flex-container">
 
     <div class='wrapcard deck'>
-      Remaining Deck
       <div class="playingCards">
         <div class="card back">*</div>
       </div>
     </div>
      {{#each discard}}  <!-- Only one in collection, but #each handles situation when there is none cleanly -->
       <div class='wrapcard discard'>
-        Discards
         <div class="playingCards">
           <div class="card rank-{{rank}} {{suit}}">
               <span class="rank">{{rank}}</span>
@@ -52,32 +59,38 @@
 
 
 <template name="opponent_hand">
-  <div class="playingCards rotateHand ">
-    <ul class="opponent hand">
-      <div class="card back">*</div>
-      <div class="card back">*</div>
-      <div class="card back">*</div>
-      <div class="card back">*</div>
-      <div class="card back">*</div>
-      <div class="card back">*</div>
-      <div class="card back">*</div>
-      <div class="card back">*</div>
-      <div class="card back">*</div>
-      <div class="card back">*</div>
-    </ul>
+  <div class="playingCards opponent_hand">
+    <!-- <ul class="opponent hand"> -->
+      <ul id="sortable2" class="table">
+        {{#each opponentCards}}
+          {{> opponentCard}}
+        {{else}}
+          <div class="card back">*</div>
+          <div class="card back">*</div>
+          <div class="card back">*</div>
+          <div class="card back">*</div>
+          <div class="card back">*</div>
+          <div class="card back">*</div>
+          <div class="card back">*</div>
+          <div class="card back">*</div>
+          <div class="card back">*</div>
+          <div class="card back">*</div>
+        {{/each}}
+      </ul>
+    <!-- </ul> -->
   </div>
 </template>
 
 
 <template name="player_hand">
   <div class="playingCards hand rotateHand">
-    <ul class="table">
-      <ul id="sortable">
+    <!-- <ul class="table"> -->
+      <ul id="sortable" class="table">
         {{#each playerCards}}
             {{> card}}
         {{/each}}
       </ul>
-    </ul>
+    <!-- </ul> -->
   </div>
 
   <div>
@@ -89,6 +102,15 @@
 <template name="card">
   <li class='sort ui-state-default'>
     <div class="card playerhand rank-{{rank}} {{suit}}">
+        <span class="rank">{{rank}}</span>
+        <span class="suit">{{{suitSymbol}}}</span>
+    </div>
+  </li>
+</template>
+
+<template name="opponentCard">
+  <li class='sort ui-state-default'>
+    <div class="card rank-{{rank}} {{suit}}">
         <span class="rank">{{rank}}</span>
         <span class="suit">{{{suitSymbol}}}</span>
     </div>

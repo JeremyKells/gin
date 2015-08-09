@@ -1,9 +1,31 @@
 /* CSS declarations go here */
 
+#scoreboard {
+  display: flex;
+
+  flex-direction: column;
+
+  display: none;
+
+}
+#scoreboard table {
+  margin-top: 3em;
+  background-color: rgb(116, 215, 69);
+  border-width: 4px;
+  border-color: black;
+  border-style: solid;
+
+}
+
+
 .flex-container {
   display: flex;
   /*justify-content:         space-around;*/
   justify-content: center;
+}
+
+body {
+  width: 65em;
 }
 
 .column{
@@ -14,6 +36,9 @@
   margin: auto;  /* Magic! */
 }
 
+.wrapcard{
+  padding: 1em;
+}
 
 .opponent.hand > .card.back {
   /*margin-right: -2em;*/
@@ -21,6 +46,10 @@
   font-size: 1.4em;
   height: 6.2em;
   width: 3.3em;
+}
+
+.opponent_hand{
+
 }
 
 #sortable {

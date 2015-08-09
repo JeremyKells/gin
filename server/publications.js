@@ -13,6 +13,7 @@ Meteor.publish('games', function(){
 Meteor.publish("playerCards", function(){
   return Cards.find({hand: this.userId}); //Filter out Deck, below the top discard, and opponent's hand
 });
+
 Meteor.publish("discard", function(){
   return Cards.find({hand: 'discard'}, {sort: {position: -1}, limit: 1});
 });
