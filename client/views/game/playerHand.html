@@ -1,0 +1,12 @@
+<template name="player_hand">
+  <div class="playingCards hand rotateHand player_hand">
+    <ul class="table player_hand">
+      {{#sortable items=playerCards options=playerHandOptions}}
+            {{> card}}
+      {{/sortable}}
+      </ul>
+  </div>
+  <div>
+    {{valCards}}
+  </div>
+</template>

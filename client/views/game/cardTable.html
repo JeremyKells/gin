@@ -1,0 +1,23 @@
+<template name="cardTable">
+  <div class="flex-container">
+    <div class='wrapcard deck'>
+      <div class="playingCards">
+        <div class="card back">*</div>
+      </div>
+    </div>
+
+      <div class='wrapcard discard'>
+        <div class="discard playingCards">
+          <!-- {{#sortable items=discard sortField="position" group='cards' options=discardOptions}} -->
+          {{#sortable items=discard group='cards' sort=false options=discardOptions}}
+            <div class="card playerHand rank-{{rank}} {{suit}}">
+                <span class="rank">{{rank}}</span>
+                <span class="suit">{{{suitSymbol}}}</span>
+            </div>
+          {{/sortable}}
+        </div>
+      </div>
+
+
+  </div>
+</template>

@@ -1,5 +1,9 @@
 /* CSS declarations go here */
 
+.playerHand {
+  margin: 0 -1em .5em 0;
+}
+
 #scoreboard {
   display: flex;
 

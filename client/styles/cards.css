@@ -10,6 +10,12 @@
 /* card itself
 ********************************************************************/
 
+.discard .playingCards{
+  background-color: blue;
+  min-width: 56px;
+  min-height: 78px;
+}
+
 .playingCards .card {
     display: inline-block;
     width: 3.3em;
@@ -20,7 +26,7 @@
     -webkit-border-radius: .3em;
     -khtml-border-radius: .3em;
     padding: .25em;
-    margin: 0 .5em .5em 0;
+    margin: 0 -1em .5em 0;
     text-align: center;
     font-size: 1.2em; /* @change: adjust this value to make bigger or smaller cards */
     font-weight: normal;

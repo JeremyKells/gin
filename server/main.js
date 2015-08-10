@@ -131,8 +131,10 @@ Meteor.methods({
       var discardPosition = discards.length;  // probably cheaper to cache
       Cards.update(_id, { $set: { hand: 'discard', position: discards.length } });
 
+      console.log("_id", _id);
+      var c = Cards.findOne(_id);
+      var game = Games.findOne(c.gameId);
       // Rotate turn
-      var game = Games.find(discards[0].gameId).fetch()[0];
       if (game.turn === game.createdBy_id ){
         Games.update(game._id, { $set: {turn: game.opponent_id }});
       } else {

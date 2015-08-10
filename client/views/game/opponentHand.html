@@ -1,0 +1,22 @@
+<template name="opponent_hand">
+  <div class="playingCards opponent_hand">
+    <!-- <ul class="opponent hand"> -->
+      <ul id="sortable2" class="table">
+        {{#each opponentCards}}
+          {{> opponentCard}}
+        {{else}}
+          <div class="card back">*</div>
+          <div class="card back">*</div>
+          <div class="card back">*</div>
+          <div class="card back">*</div>
+          <div class="card back">*</div>
+          <div class="card back">*</div>
+          <div class="card back">*</div>
+          <div class="card back">*</div>
+          <div class="card back">*</div>
+          <div class="card back">*</div>
+        {{/each}}
+      </ul>
+    <!-- </ul> -->
+  </div>
+</template>
