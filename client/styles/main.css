@@ -12,6 +12,8 @@
   opacity: 0.1;
   position: relative;
   background-color: rgb(167, 181, 236);
+  background-color: green);
+  opacity: 0.7;
 }
 
 .sortable-ghost {

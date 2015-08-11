@@ -4,11 +4,11 @@ Template.card.helpers({
   },
 });
 
-Template.card.rendered = function(){
-  this.firstNode.onclick = function() {
-    console.log("discard");
-    var card = Blaze.getData(this);
-    console.log(card);
-    Meteor.call('discard', card._id);
-  };
-};
+// Template.card.rendered = function(){
+//   this.firstNode.onclick = function() {
+//     console.log("discard");
+//     var card = Blaze.getData(this);
+//     console.log(card);
+//     Meteor.call('discard', card._id);
+//   };
+// };

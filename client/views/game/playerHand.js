@@ -30,43 +30,53 @@ newPosition = function(el){
  Template.player_hand.rendered = function () {
    console.log("Template.player_hand.rendered");
 
-   playerHand = Sortable.create(playerHand, {
-      group: "hands",
-      put: true,
-      pull: true,
-      onAdd: function (evt){
-       //  if(evt.currentTarget.classList.contains('discard')){
-       //    Meteor.call('discard', Blaze.getData(evt.item)._id);
-       //  }
-       //  if( evt.currentTarget.classList.contains('player_hand') && evt.from.classList.contains('discard') ){
-       //    Meteor.call('pickupDiscard');
-       //  }
+   Meteor.setTimeout(function(){
 
-        console.log('onAdd.playerHand:', evt);
-        if(evt.from.id === 'discard'){ // picked up discard
-          Meteor.call('pickupDiscard', newPosition(evt.item));
-          //Blaze.getData(evt.item)._id
+     playerHand = Sortable.create(playerHand, {
+        group: {
+          name: "hands",
+          put: true,
+          pull: true,
+        },
+        onAdd: function (evt){
+         //  if(evt.currentTarget.classList.contains('discard')){
+         //    Meteor.call('discard', Blaze.getData(evt.item)._id);
+         //  }
+         //  if( evt.currentTarget.classList.contains('player_hand') && evt.from.classList.contains('discard') ){
+         //    Meteor.call('pickupDiscard');
+         //  }
+
+          console.log('onAdd.playerHand:', evt);
+          if(evt.from.id === 'discard'){ // picked up discard
+            Meteor.call('pickupDiscard', newPosition(evt.item));
+            //Blaze.getData(evt.item)._id
+          }
+          if(evt.from.id === 'deck'){ // picked up discard
+            Meteor.call('pickupNewCard', newPosition(evt.item));
+            evt.item.parentNode.removeChild(evt.item);
+            //Blaze.getData(evt.item)._id
+          }
+        },
+        onUpdate: function (evt){
+          console.log('onUpdate.playerHand:', evt);
+          Meteor.call('sort_stop', Blaze.getData(evt.item)._id, newPosition(evt.item));
+        },
+        onRemove: function (evt){
+          console.log('onRemove.playerHand:', evt);
+        },
+        onStart:function(evt){
+          $('#droppable').show();
+          // console.log('onStart.playerHand:', evt);
+        },
+        onSort:function(evt){
+          console.log('onStart.playerHand:', evt);
+        },
+        onEnd: function(evt){
+        //   console.log('onEnd.playerHand:', evt);
+          $('#droppable').hide();
         }
-        },
-      onUpdate: function (evt){
-        console.log('onUpdate.playerHand:', evt);
-        Meteor.call('sort_stop', Blaze.getData(evt.item)._id, newPosition(evt.item));
-        },
-      onRemove: function (evt){
-        console.log('onRemove.playerHand:', evt);
-        },
-      onStart:function(evt){
-        $('#droppable').show();
-        // console.log('onStart.playerHand:', evt);
-      },
-      onSort:function(evt){
-        console.log('onStart.playerHand:', evt);
-        },
-      onEnd: function(evt){
-      //   console.log('onEnd.playerHand:', evt);
-        $('#droppable').hide();
-        }
-    });
+      });
+    }, 100);
 
     console.log(playerHand);
 

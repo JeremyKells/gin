@@ -1,10 +1,17 @@
 <template name="cardTable">
+
+
   <div class="flex-container">
     <div class='wrapcard deck'>
       <div class="playingCards">
-        <div class="card back">*</div>
+        <ul id='deck' class="table" >
+            <li class='sort ui-state-default'>
+              <div class="card back">*</div>
+            </li>
+        </ul>
       </div>
     </div>
+
 
       <div class='wrapcard discard'>
         <div class="discard playingCards">

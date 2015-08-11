@@ -23,9 +23,8 @@ Meteor.methods({
   knock: function(_id){
     console.log("knock");
 
-
     var cards = Cards.find({hand: this.userId}, {sort: {position: 1}}).fetch();
-    var discards = Cards.find({hand: this.userId}, {sort: {position: 1}}).fetch();   //needs GameId
+    var discards = Cards.find({hand: 'discard'}, {sort: {position: 1}}).fetch();   //needs GameId
     var hv = handVal([], cards);
     if( (hv.points - hv.cards[hv.cards.length-1].val ) > 10){
       throw new Meteor.Error(403, "Cannot Knock: " + hv.points + " - " + hv.cards[hv.cards.length-1].val  + " = " + (hv.points - hv.cards[hv.cards.length-1].val ) );
@@ -45,6 +44,7 @@ Meteor.methods({
     Games.update(_id, { $set:{
                   knocked: this.userId,
                   status: 'endgame' }});
+    Cards.update({gameId: _id}, {$set: {showOpponent: true}}, {multi: true});
   },
 
   sort_stop: function(card_id, newPosition){
@@ -94,7 +94,8 @@ Meteor.methods({
                     position: i,    // i is coming from outside this scope, probably should fix.
                     suit: card.suit,
                     rank: card.rank,
-                    val: val(card.rank)
+                    val: val(card.rank),
+                    showOpponent: false,
                     });
     };
 
@@ -123,12 +124,12 @@ Meteor.methods({
     Cards.update(card_id, { $set: { hand: this.userId, position: newPosition } } );
   },
 
-  pickupNewCard: function(){
+  pickupNewCard: function(newPosition){
     // TODO: Check it's appropriate at this point
     console.log('pos: ' + Cards.findOne({hand: 'deck'}, {sort: {position: -1}, limit: 1}).position);
 
     card_id = Cards.findOne({hand: 'deck'}, {sort: {position: -1}, limit: 1})._id;
-    newPosition = Cards.findOne({hand: this.userId}, {sort: {position: -1}, limit: 1}).position + 1;
+    // newPosition = Cards.findOne({hand: this.userId}, {sort: {position: -1}, limit: 1}).position + 1;
     Cards.update(card_id, { $set: { hand: this.userId, position: newPosition } } );
     // TODO: Needs to return values to client, indicate number of cards left, or fail/not allowed
 
@@ -139,7 +140,6 @@ Meteor.methods({
     var cards = Cards.find({hand: this.userId}).fetch();
     if(true || cards.length === 11){
       var discards = Cards.find({hand: 'discard'}).fetch();
-      var discardPosition = discards.length;  // probably cheaper to cache
       Cards.update(_id, { $set: { hand: 'discard', position: discards.length } });
 
       console.log("_id", _id);

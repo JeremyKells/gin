@@ -11,8 +11,29 @@ Meteor.publish('games', function(){
 
 
 Meteor.publish("playerCards", function(){
-  return Cards.find({hand: this.userId}); //Filter out Deck, below the top discard, and opponent's hand
+  return Cards.find({$or: [{hand: this.userId},
+                           {showOpponent: true, hand: { $ne: 'discard' } }
+                          ]});
 });
+
+
+
+// Meteor.publish("playerCards", function(){
+//   return Cards.find({hand: this.userId});
+//   // return Cards.find({$or: [{hand: this.userId}]
+//                           //   {showOpponent : true,
+//                           //    hand : {$not: 'discard'}
+//                           //    }
+//                           // ]
+//                           // });
+// });
+
+
+opponentId = function(gameObj){
+  return [gameObj.opponent_id, gameObj.createdBy_id].filter(function(i){
+    return i !== this.userId;
+  })[0];
+};
 
 Meteor.publish("discard", function(){
   return Cards.find({hand: 'discard'}, {sort: {position: -1}, limit: 1});
