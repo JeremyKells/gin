@@ -5,14 +5,18 @@
   border: 2px dashed #f60;
   min-height: 120px;
   min-width:  80px;
+  max-width: 120px;
   margin-top: 10px;
   margin-left: -80px;
   z-index: 10;
   opacity: 0.1;
   position: relative;
-  background-color: blue;
+  background-color: rgb(167, 181, 236);
 }
 
+.sortable-ghost {
+  opacity: 0.4;
+}
 
 .playerHand {
   margin: 0 -1em .5em 0;
@@ -20,12 +24,10 @@
 
 #scoreboard {
   display: flex;
-
   flex-direction: column;
-
   display: none;
-
 }
+
 #scoreboard table {
   margin-top: 3em;
   background-color: rgb(116, 215, 69);
@@ -37,6 +39,7 @@
 
 
 .flex-container {
+  display: -webkit-flex;
   display: flex;
   /*justify-content:         space-around;*/
   justify-content: center;
@@ -47,6 +50,7 @@ body {
 }
 
 .column{
+  -webkit-flex-direction: column;
   flex-direction: column;
 }
 

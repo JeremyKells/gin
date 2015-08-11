@@ -9,18 +9,18 @@
 
   <div class='flex-container column'>
     <div id="name">
-      <h1>It's {{whosTurn}}</h1>
+      <h3>It's {{whosTurn}}</h1>
     </div>
     {{>opponent_hand}}
 
-    <br><br>
+    <br>
     {{> cardTable}}
-    <br><br>
+    <br>
     {{#if canknock}}
       <div class='flex-container' id="name">
         <button class="btn btn-success danger" id="knock">Knock</button>
       </div>
-      <br><br>
+      <br>
     {{/if}}
     {{> player_hand}}
   </div>
