@@ -23,6 +23,17 @@ Meteor.methods({
   knock: function(_id){
     console.log("knock");
 
+
+    var cards = Cards.find({hand: this.userId}, {sort: {position: 1}}).fetch();
+    var discards = Cards.find({hand: this.userId}, {sort: {position: 1}}).fetch();   //needs GameId
+    var hv = handVal([], cards);
+    if( (hv.points - hv.cards[hv.cards.length-1].val ) > 10){
+      throw new Meteor.Error(403, "Cannot Knock: " + hv.points + " - " + hv.cards[hv.cards.length-1].val  + " = " + (hv.points - hv.cards[hv.cards.length-1].val ) );
+    }
+    if(hv.cards.length > 0){
+      Cards.update(hv.cards[hv.cards.length-1]._id, { $set: { hand: 'discard', position: discards.length } });
+    }
+
     //Calculate score, update result
 
     /*{ createdBy_points: 10,
@@ -105,10 +116,10 @@ Meteor.methods({
 
   },
 
-  pickupDiscard: function(){
+  pickupDiscard: function(newPosition){
     // Check it's appropriate at this point
     card_id = Cards.findOne({hand: 'discard'}, {sort: {position: -1}, limit: 1})._id;
-    newPosition = Cards.findOne({hand: this.userId}, {sort: {position: -1}, limit: 1}).position + 1;
+    //newPosition = Cards.findOne({hand: this.userId}, {sort: {position: -1}, limit: 1}).position + 1;
     Cards.update(card_id, { $set: { hand: this.userId, position: newPosition } } );
   },
 
@@ -126,7 +137,7 @@ Meteor.methods({
   discard: function(_id){
     // Check it's appropriate at this point
     var cards = Cards.find({hand: this.userId}).fetch();
-    if(cards.length === 11){
+    if(true || cards.length === 11){
       var discards = Cards.find({hand: 'discard'}).fetch();
       var discardPosition = discards.length;  // probably cheaper to cache
       Cards.update(_id, { $set: { hand: 'discard', position: discards.length } });

@@ -8,14 +8,21 @@
 
       <div class='wrapcard discard'>
         <div class="discard playingCards">
-          <!-- {{#sortable items=discard sortField="position" group='cards' options=discardOptions}} -->
-          {{#sortable items=discard group='cards' sort=false options=discardOptions}}
-            <div class="card playerHand rank-{{rank}} {{suit}}">
-                <span class="rank">{{rank}}</span>
-                <span class="suit">{{{suitSymbol}}}</span>
-            </div>
-          {{/sortable}}
+          <ul id='discard' class="table" >
+            {{#each discard}}
+              <li class='sort ui-state-default'>
+                <div class="card playerHand rank-{{rank}} {{suit}}">
+                    <span class="rank">{{rank}}</span>
+                    <span class="suit">{{{suitSymbol}}}</span>
+                </div>
+              </li>
+            {{/each}}
+          </ul>
+
         </div>
+      </div>
+      <!-- droppable -->
+      <div id="droppable" class="list-group">
       </div>
 
 

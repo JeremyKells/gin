@@ -33,14 +33,61 @@ Template.cardTable.helpers({
   },
 });
 
+Template.cardTable.rendered = function () {
+  discard = Sortable.create(discard, {
+    group: "hands",
+    put: false,
+    pull: true,
+    sort: false,
+
+    onAdd: function (evt){
+     //  if(evt.currentTarget.classList.contains('discard')){
+     //    Meteor.call('discard', Blaze.getData(evt.item)._id);
+     //  }
+     //  if( evt.currentTarget.classList.contains('player_hand') && evt.from.classList.contains('discard') ){
+     //    Meteor.call('pickupDiscard');
+     //  }
+      console.log('onAdd.discard:', evt);
+      },
+    onUpdate: function (evt){
+      console.log('onUpdate.discard:', evt);
+      },
+    onRemove: function (evt){
+      console.log('onRemove.discard:', evt);
+      },
+    onStart:function(evt){
+    //   console.log('onStart.discard:', evt);
+    },
+    onSort:function(evt){
+      console.log('onStart.discard:', evt);
+      },
+    onEnd: function(evt){
+    //   console.log('onEnd.discard:', evt);
+      }
+
+  });
+  console.log(discard);
+
+  droppable = Sortable.create(droppable, {
+    group: "hands",
+
+    onAdd: function (evt) {
+      evt.item.parentNode.removeChild(evt.item);
+      Meteor.call('discard', Blaze.getData(evt.item)._id);
+    }
+  });
+
+
+};
+
 Template.cardTable.events({
   "click .deck": function(event, template){
     console.log("click .deck");
     Meteor.call('pickupNewCard');
   },
-  "click .discard": function(event, template){
-      console.log("click .discard");
-      Meteor.call('pickupDiscard');
-  }
+  // "click .discard": function(event, template){
+  //     console.log("click .discard");
+  //     Meteor.call('pickupDiscard');
+  // }
 
 });

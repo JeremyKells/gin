@@ -76,3 +76,7 @@ Template.registerHelper("opponentCards", function(){
     cards = Cards.find({hand: opponentId(this)}, {sort: {position: 1}});
     return cards;
 });
+
+Template.gameLayout.rendered = function () {
+
+};

@@ -11,7 +11,6 @@
 ********************************************************************/
 
 .discard .playingCards{
-  background-color: blue;
   min-width: 56px;
   min-height: 78px;
 }
