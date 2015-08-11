@@ -66,7 +66,6 @@ Meteor.methods({
         deck.push({suit : s, rank: r});
       });
     });
-    deck = _.shuffle(deck);
 
     var val = function(i){
       n = parseInt(i);
@@ -87,7 +86,19 @@ Meteor.methods({
       return n;
     };
 
-    takeCard = function(hand){
+    deck.map(function(i){i.val = val(i.rank);});
+    deck = _.shuffle(deck);
+    deck = _.shuffle(deck);
+
+    var hands = [[], []];
+    for(var j=0; j<2; j++){
+      for (var i=0; i<10; i++){
+        hands[j].push(deck.pop());
+      }
+      hands[j].sort(sorter);
+    }
+
+    takeCard = function(hand, deck){
       var card = deck.pop();
       Cards.insert({gameId: _id,
                     hand: hand,
@@ -99,16 +110,16 @@ Meteor.methods({
                     });
     };
 
-    for (var i=0; i<10; i++){
-      takeCard(game.createdBy_id);
-      takeCard(game.opponent_id);
+    for (var i=0; i<10; i++){      // ugly...
+      takeCard(game.createdBy_id, hands[0]);
+      takeCard(game.opponent_id, hands[1]);
     }
 
     i=0;
-    takeCard('discard');
+    takeCard('discard', deck);
 
     for (i=0; i<31; i++){
-      takeCard('deck');
+      takeCard('deck', deck);
     }
 
     Games.update(_id, { $set:{
