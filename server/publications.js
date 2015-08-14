@@ -1,7 +1,9 @@
 Meteor.publish('userPresence', function() {
   var filter = { userId: { $exists: true }};
-  return Presences.find(filter, { fields: { state: true, userId: true }});
+  return [Presences.find(filter, { fields: { state: true, userId: true }}),
+          Meteor.users.find({}, {fields: {username: 1}})];
 });
+
 
 Meteor.publish('games', function(){
   var filter = { $or: [{createdBy_id: this.userId}, {opponent_id: this.userId}]};

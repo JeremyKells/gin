@@ -1,5 +1,18 @@
 
+canKnock = function(){
+  try {
+    // Deadwood must be sorted.  in try / catch as throws due to executing before Session variables have ben set
+    return playerCards().fetch().length === 11 && Session.get('points') - _.max(Session.get('Deadwood').map(function(i){return i.val;})) < 11;
+  } catch (variable) {
+  } finally {
+  }
+};
+
+
 Template.cardTable.helpers({
+
+  canknock: canKnock,
+
   discard: function(){
     return Cards.find({hand: 'discard'});
   },
@@ -33,83 +46,55 @@ Template.cardTable.helpers({
   },
 });
 
+makeDeckSortable = function(){
+  delete deckSortable;
+  deckSortable = Sortable.create(deck, {
+    group: {
+      name: "hands",
+      pull: 'clone',
+      put: false,
+    },
+  });
+};
+
+makeDiscardSortable = function(){
+  delete discard;
+  discard = Sortable.create(discard, {
+    group: {
+      name: "hands",
+      put: false,
+      pull: true,
+      sort: false,
+    },
+  });
+};
+
+makeDiscardDroppable = function(){
+  delete discardDropArea;
+  discardDropArea = Sortable.create(discardDropArea, {
+    group: "hands",
+    onAdd: function (evt) {
+      evt.item.parentNode.removeChild(evt.item);
+      Meteor.call('discard', Blaze.getData(evt.item)._id);
+    }
+  });
+};
+
+makeKnockAreaDroppable = function(){
+  delete knockedDropArea;
+  knockedDropArea = Sortable.create(knockedDropArea, {
+    group: "hands",
+  });
+};
+
 Template.cardTable.rendered = function () {
-
+  console.log("Template.cardTable.rendered");
   Meteor.setTimeout(function(){
-
-    deckSortable = Sortable.create(deck, {
-      group: {
-        name: "hands",
-        pull: 'clone',
-        put: false,
-      },
-      //sort: false,
-      onAdd: function (evt){
-        console.log('onAdd.deck:', evt);
-        },
-      onUpdate: function (evt){
-        console.log('onUpdate.deck:', evt);
-        },
-      onRemove: function (evt){
-        console.log('onRemove.deck:', evt);
-        },
-      onStart:function(evt){
-         console.log('onStart.deck:', evt);
-      },
-      onSort:function(evt){
-        console.log('onStart.deck:', evt);
-        },
-      onEnd: function(evt){
-         console.log('onEnd.deck:', evt);
-        }
-    });
-
-    discard = Sortable.create(discard, {
-      group: {
-        name: "hands",
-        put: false,
-        pull: true,
-        sort: false,
-      },
-
-      onAdd: function (evt){
-       //  if(evt.currentTarget.classList.contains('discard')){
-       //    Meteor.call('discard', Blaze.getData(evt.item)._id);
-       //  }
-       //  if( evt.currentTarget.classList.contains('player_hand') && evt.from.classList.contains('discard') ){
-       //    Meteor.call('pickupDiscard');
-       //  }
-        console.log('onAdd.discard:', evt);
-        },
-      onUpdate: function (evt){
-        console.log('onUpdate.discard:', evt);
-        },
-      onRemove: function (evt){
-        console.log('onRemove.discard:', evt);
-        },
-      onStart:function(evt){
-      //   console.log('onStart.discard:', evt);
-      },
-      onSort:function(evt){
-        console.log('onStart.discard:', evt);
-        },
-      onEnd: function(evt){
-      //   console.log('onEnd.discard:', evt);
-        }
-
-    });
-    console.log(discard);
-
-    droppable = Sortable.create(droppable, {
-      group: "hands",
-
-      onAdd: function (evt) {
-        evt.item.parentNode.removeChild(evt.item);
-        Meteor.call('discard', Blaze.getData(evt.item)._id);
-      }
-    });
-  }, 1000);
-
+    makeDeckSortable();
+    makeDiscardSortable();
+    makeDiscardDroppable();
+    makeKnockAreaDroppable();
+  }, 100);
 };
 
 // Template.cardTable.events({

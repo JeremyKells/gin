@@ -1,22 +1,42 @@
 <template name="opponent_hand">
-  <div class="playingCards opponent_hand">
-    <!-- <ul class="opponent hand"> -->
-      <ul id="sortable2" class="table">
-        {{#each opponentCards}}
-          {{> opponentCard}}
-        {{else}}
-          <div class="card back">*</div>
-          <div class="card back">*</div>
-          <div class="card back">*</div>
-          <div class="card back">*</div>
-          <div class="card back">*</div>
-          <div class="card back">*</div>
-          <div class="card back">*</div>
-          <div class="card back">*</div>
-          <div class="card back">*</div>
-          <div class="card back">*</div>
-        {{/each}}
-      </ul>
-    <!-- </ul> -->
+  <div class='flex-container justify-content' id="opponentHand">
+    {{#if opponentCards}}
+      {{#each melded}}
+        <div class="playingCards opponent_hand">
+          <ul class="table">
+            {{test}}
+            {{#each meld}}
+              {{> opponentCard}}
+            {{/each}}
+          </ul>
+        </div>
+      {{/each}}
+
+      {{#if deadwood}}
+        <div class="playingCards opponent_hand">
+          <ul class="table">
+            {{#each deadwood}}
+              {{> opponentCard}}
+            {{/each}}
+          </ul>
+        </div>
+      {{/if}}
+
+    {{else}}
+      <div class="playingCards opponent_hand">
+          <ul id="sortable2" class="table">
+            <div class="card back">*</div>
+            <div class="card back">*</div>
+            <div class="card back">*</div>
+            <div class="card back">*</div>
+            <div class="card back">*</div>
+            <div class="card back">*</div>
+            <div class="card back">*</div>
+            <div class="card back">*</div>
+            <div class="card back">*</div>
+            <div class="card back">*</div>
+        </ul>
+      </div>
+    {{/if}}
   </div>
 </template>

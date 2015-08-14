@@ -1,4 +1,4 @@
-Template.game.helpers({
+Template.gameButtons.helpers({
   waiting: function(){
     return this.status === 'proposed' && this.createdBy_id  === Meteor.userId();
   },
@@ -13,28 +13,19 @@ Template.game.helpers({
     return this.createdBy_name;
   },
   accepted: function(){
-    if(this.status === 'accepted'){
-
-    //TODO:  figure out better way to handle this
-      Router.go('/game/' + this._id);
-      }
     return this.status === 'accepted';
-    // /TODO
   }
 });
 
-
-
-Template.game.events({
+Template.gameButtons.events({
   "click .acceptButton": function(event, template){
     Meteor.call("startGame", this._id, function(error, result){
       console.log("startGame returned (error, result): " + error + ' / ' + result);
-
       if(error){
         console.log("error", error);
       }
       if(result){
-        Router.go('game.show', {_id: this._id});
+        Router.go('game.show', {_id: result});
       }
     });
 
@@ -47,6 +38,4 @@ Template.game.events({
     // TODO, transitons
     Meteor.call('deleteGame', this._id);
   },
-
-
 });

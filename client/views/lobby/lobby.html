@@ -1,9 +1,28 @@
 <template name="lobby">
-  <h6>Lobby: Welcome to Bidding War!</h6>
-  <h1>Start the bidding</h1>
-  {{> loginButtons}}
-  {{> onlineCount}}
-  <br>
-  {{> displayGames}}
+  <h2>Lobby: Welcome to Gin Rummy!</h2>
 
+  {{#unless isLoggedIn}}
+    <h4>As this is a multiplayer game, you must create an account and login (just username and password required)</h4>
+  {{/unless}}
+
+  {{> loginButtons}}
+  <h4>Currently Online</h4>
+  {{#each loggedInUsers}}
+    {{> user}}
+  {{/each}}
+  <br>
+</template>
+
+
+<template name="user">
+  <div class='userListItem'>
+    {{#if haveProposal}}
+      {{#with game}}
+        {{> gameButtons}}
+      {{/with}}
+    {{else}}
+    {{username}}
+    <button class="btn btn-primary proposeGame">Start Game</button>
+    {{/if}}
+  </div>
 </template>

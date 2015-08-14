@@ -1,5 +1,5 @@
 
-var opponentName = function(gameObj){
+opponentName = function(gameObj){
   return [gameObj.opponent_name, gameObj.createdBy_name].filter(function(i){
     return i !== Meteor.user().username;
   })[0];
@@ -11,14 +11,14 @@ opponentId = function(gameObj){
   })[0];
 };
 
-canKnock = function(){
+function canKnock(){
   try {
     // Deadwood must be sorted.  in try / catch as throws due to executing before Session variables have ben set
-    return playerCards().fetch().length === 11 && Session.get('points') - Session.get('Deadwood')[0].val < 11;
+    return playerCards().fetch().length === 11 && Session.get('points') - _.max(Session.get('Deadwood').map(function(i){return i.val;})) < 11;
   } catch (variable) {
   } finally {
   }
-};
+}
 
 Template.gameLayout.events({
   "click #knock": function(){
@@ -30,16 +30,16 @@ Template.gameLayout.events({
     Meteor.call('deleteGame', this._id);
     Meteor.setTimeout(function(){
       Router.go('/lobby');
-    }, 1000);
+    }, 100);
 
   },
 });
 
 Template.gameLayout.helpers({
 
-  canknock: canKnock,
-
   whosTurn: function(){
+    console.log("message");
+
     if(Meteor.userId() === this.turn){
       if( playerCards().fetch().length === 11 ){
         if (canKnock() === true){
@@ -71,11 +71,6 @@ playerCards = function(){
 };
 
 Template.registerHelper("playerCards", playerCards);
-
-Template.registerHelper("opponentCards", function(){
-    cards = Cards.find({hand: opponentId(this)}, {sort: {position: 1}});
-    return cards;
-});
 
 Template.gameLayout.rendered = function () {
 

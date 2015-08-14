@@ -41,9 +41,15 @@ Meteor.methods({
     opponent_bonus: 0,
     result: 'Gin' }*/
 
-    Games.update(_id, { $set:{
-                  knocked: this.userId,
-                  status: 'endgame' }});
+    if(hv.points === 0){
+      Games.update(_id, { $set:{
+                    knocked: this.userId,
+                    status: 'scoreboard' }});
+    } else {
+      Games.update(_id, { $set:{
+                    knocked: this.userId,
+                    status: 'knocked' }});
+    }
     Cards.update({gameId: _id}, {$set: {showOpponent: true}}, {multi: true});
   },
 
@@ -51,9 +57,6 @@ Meteor.methods({
     Cards.update({_id: card_id}, {$set: {position: newPosition}});
   },
 
-  deleteGame: function(_id){
-      Games.remove(_id);
-  },
 
   startGame: function(_id){
     // Shuffle cards, 10 to each player, one to discard pile, rest to deck  - all arrays in game object
@@ -125,7 +128,7 @@ Meteor.methods({
     Games.update(_id, { $set:{
                   status: 'accepted',
                   result: [] }});
-
+    return _id;
   },
 
   pickupDiscard: function(newPosition){
@@ -166,11 +169,48 @@ Meteor.methods({
     }
   },
 
-  createGame: function(){
-    var opponent = Meteor.users.findOne({_id: { $ne: this.userId } });
+  layoff: function(_id){
+    var card = Cards.findOne(_id);
+    var game = Games.findOne(card.gameId);
+    var oppoId = opponentId(game);
+    var oppoHand = Cards.find({hand: oppoId}).fetch();
+    var startHV = handVal([], oppoHand);
+    /*var withoutDeadwood = [].concat.apply([], startHV.melded);*/
+    /*var appendedHV = handVal([], withoutDeadwood);*/
+
+    console.log(startHV.points);
+    oppoHand.push(card);
+    var appendedHV = handVal([], oppoHand);
+    console.log(appendedHV.points);
+
+    /*withoutDeadwood.push(card);
+    var appendedHV = handVal([], withoutDeadwood);*/
+
+    console.log("layoff");
+    console.log(_id);
+    console.log(appendedHV.points);
+
+    if(appendedHV.points === 0){
+      // can layoff
+      console.log("layedOff");
+      Cards.update(_id, {$set: {hand: oppoId}});
+      return true;
+    }
+    else{
+      console.log("cannot layoff this card");
+      // TODO revisit, try to just rerender view
+      /*Cards.update(_id, {$set: {hand: 'dummy'}});
+      Cards.update(_id, {$set: {hand: this.userId}});*/
+      return false;
+    }
+  },
 
 
 
+
+  proposeGame: function(opponentId){
+    /*var opponent = Meteor.users.findOne({_id: { $ne: this.userId } });*/
+    opponent = Meteor.users.findOne(opponentId);
     var newGame = {createdBy_id:  this.userId,
                   createdBy_name: Meteor.users.findOne(this.userId).username,
                   opponent_id:    opponent._id,

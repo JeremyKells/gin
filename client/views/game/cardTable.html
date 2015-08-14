@@ -1,4 +1,6 @@
 <template name="cardTable">
+  <div id="knockedDropArea" class="list-group">
+  </div>
 
 
   <div class="flex-container">
@@ -28,9 +30,16 @@
 
         </div>
       </div>
-      <!-- droppable -->
-      <div id="droppable" class="list-group">
+      <div id="discardDropArea" class="list-group">
       </div>
+
+      {{#if canknock}}
+        <div class='flex-container column' id="knockContainer">
+          <button class="btn btn-success" id="knock">Knock</button>
+        </div>
+        <br>
+      {{/if}}
+
 
 
   </div>

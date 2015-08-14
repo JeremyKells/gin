@@ -4,7 +4,29 @@
   padding-bottom: 5px;
 }
 
-#droppable {
+
+
+#knock{
+  max-height: 40px;
+}
+
+#knockedDropArea {
+  display: none;
+  border: 2px dashed #f60;
+  min-height: 120px;
+  /*min-width:  80px;*/
+  margin-top: -110px;
+  margin-left: 10px;
+  margin-bottom: -10px;
+
+  z-index: 10;
+  position: relative;
+  background-color: rgb(167, 181, 236);
+  opacity: 0.2;
+}
+
+
+#discardDropArea {
   display: none;
   border: 2px dashed #f60;
   min-height: 120px;
@@ -50,6 +72,11 @@
   display: flex;
   /*justify-content:         space-around;*/
   justify-content: center;
+}
+
+.justify-content {
+  -webkit-justify-content: space-around; /* Safari */
+  justify-content:         space-around;
 }
 
 body {

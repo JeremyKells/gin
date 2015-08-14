@@ -1,3 +1,5 @@
+
+
 sumCardValues = function(cards){
   return cards.reduce(function(pv, cv) { return pv + Math.min(cv.val, 10); }, 0);
 };
@@ -19,7 +21,7 @@ sorter = function (a, b){
     return -1;
   else
     return 1;
-  }
+  };
 
 function isRun(cards){
   var vals = cards.map(function(c){ return c.val;});
