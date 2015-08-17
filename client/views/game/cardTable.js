@@ -1,15 +1,20 @@
 
 canKnock = function(){
-  try {
-    // Deadwood must be sorted.  in try / catch as throws due to executing before Session variables have ben set
-    return playerCards().fetch().length === 11 && Session.get('points') - _.max(Session.get('Deadwood').map(function(i){return i.val;})) < 11;
-  } catch (variable) {
-  } finally {
-  }
+    var cards = playerCards().fetch();
+    var hand = handVal([], cards);
+    return cards.length === 11 && (hand.points === 0 || hand.points - _.max(hand.cards.map(function(i){return i.val;})) < 11 );
 };
 
 
 Template.cardTable.helpers({
+
+  canlayoff: function(){
+      game = Games.findOne({});
+      if(game.status === 'knocked' && Meteor.userId() !== game.knocked)
+        return true;
+      else
+        return false;
+      },
 
   canknock: canKnock,
 
@@ -97,7 +102,12 @@ Template.cardTable.rendered = function () {
   }, 100);
 };
 
-// Template.cardTable.events({
+ Template.cardTable.events({
+   'click #layoffFinished': function(){
+     Meteor.call('HandCompleted');
+   },
+
+ });
 //   "click .deck": function(event, template){
 //     console.log("click .deck");
 //     Meteor.call('pickupNewCard');

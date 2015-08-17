@@ -1,4 +1,6 @@
 
+
+
 function results(){
     g = Games.findOne();
     var resultList = [];
@@ -20,8 +22,10 @@ function results(){
       }
       r.myHandTotal = r.myPoints + r.myBonus;
       r.myOpponentHandTotal = r.myOpponentPoints + r.myOpponentBonus;
+      r.result = g.result[i].result;
       resultList.push(r);
     }
+
   return resultList;
 }
 
@@ -76,7 +80,6 @@ function opponentGrandTotal(){
     return myOpponentTotal() + opponentGameBonus() + opponentLineBonus() + opponentShutoutBonus();
 }
 
-
 Template.scoreboard.helpers({
 
   results: results,
@@ -90,7 +93,7 @@ Template.scoreboard.helpers({
   opponentShutoutBonus: opponentShutoutBonus,
   myGrandTotal: myGrandTotal,
   opponentGrandTotal: opponentGrandTotal,
-  
+
   matchFinished: function(){
     return myTotal() > 99 || myOpponentTotal() > 99;
   },
@@ -108,6 +111,29 @@ Template.scoreboard.helpers({
       return g.createdBy_name;
     }
   },
+});
+
+Template.scoreboard.rendered = function(){
+  Tracker.autorun(function(){
+    var g = Games.find({$or: [{status: 'scoreboard'}, {status: 'final scoreboard'}]});
+    if(g.count() === 1){
+      $('#scoreboard').show();
+      $('#closeScoresheet').prop('disabled', true);
+      Meteor.setTimeout(function(){
+        $('#closeScoresheet').prop('disabled', false);
+      }, 5000);
+    } else
+      $('#scoreboard').hide();
+  });
+};
 
 
+Template.scoreboard.events({
+  "click #closeScoresheet": function(event, template){
+    game = Games.findOne();
+    if(game.status === 'final scoreboard')
+      Meteor.call('deleteGame', game._id);
+    else
+      Meteor.call('nextHand', game._id);
+  }
 });

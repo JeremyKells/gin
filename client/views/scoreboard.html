@@ -1,88 +1,98 @@
 <template name="scoreboard">
 
   <div id='scoreboard' class='scoreboard modal container'>
-    <table class="table table-striped">
-      <tbody>
-        <tr>
-          <td colspan="2" class="sep"></td>
-          <td colspan="3" class="sep">
-            <h3>{{myName}}</h3>
-          </td>
-          <td colspan="2" class="sep">
-            <h2>{{opponentName}}</h2>
-          </td>
-          <td></td>
-        </tr>
-        <tr>
-          <th class="sep">Round</th>
-          <th>Score</th>
-          <th>Bonus</th>
-          <th class="sep">Total</th>
-          <th>Score</th>
-          <th>Bonus</th>
-          <th class="sep">Total</th>
-          <th class="header-result">Result</th>
-        </tr>
+    <div class="modal-content">
+        <div class="modal-header">
 
-				{{#each results}}
-	        <tr>
-	          <td class="sep">{{roundNum}}</td>
-	          <td>{{myPoints}}</td>
-	          <td>{{myBonus}}</td>
-	          <td class="sep">{{myHandTotal}}</td>
-	          <td>{{myOpponentPoints}}</td>
-	          <td>{{myOpponentBonus}}</td>
-	          <td class="sep">{{myOpponentHandTotal}}</td>
-	          <td>Knock</td>
-	        </tr>
-				{{/each}}
+        </div>
+        <div class="modal-body">
 
-        <tr class="result-row" id="total-row">
+          <table class="table table-striped">
+            <tbody>
+              <tr>
+                <td colspan="2" class="sep"></td>
+                <td colspan="3" class="sep">
+                  <h3>{{myName}}</h3>
+                </td>
+                <td colspan="2" class="sep">
+                  <h2>{{opponentName}}</h2>
+                </td>
+                <td></td>
+              </tr>
+              <tr>
+                <th class="sep">Round</th>
+                <th>Score</th>
+                <th>Bonus</th>
+                <th class="sep">Total</th>
+                <th>Score</th>
+                <th>Bonus</th>
+                <th class="sep">Total</th>
+                <th class="header-result">Result</th>
+              </tr>
 
-          <td colspan="3">Total Score</td>
-          <td class="sep" id="bottom-player-total">{{myTotal}}</td>
-          <td></td>
-          <td></td>
-          <td class="sep" id="top-player-total">{{myOpponentTotal}}</td>
-          <td></td>
-        </tr>
+      				{{#each results}}
+      	        <tr>
+      	          <td class="sep">{{roundNum}}</td>
+      	          <td>{{myPoints}}</td>
+      	          <td>{{myBonus}}</td>
+      	          <td class="sep">{{myHandTotal}}</td>
+      	          <td>{{myOpponentPoints}}</td>
+      	          <td>{{myOpponentBonus}}</td>
+      	          <td class="sep">{{myOpponentHandTotal}}</td>
+      	          <td>{{result}}</td>
+      	        </tr>
+      				{{/each}}
 
-				{{#if matchFinished}}
-        <tr id="game-bonus-row" class="result-row" style="display: table-row;">
-          <td colspan="3">Game Bonus</td>
-          <td class="sep" id="bottom-player-game-bonus">{{myGameBonus}}</td>
-          <td></td>
-          <td></td>
-          <td class="sep" id="top-player-game-bonus">{{opponentGameBonus}}</td>
-          <td></td>
-        </tr>
-        <tr id="line-bonus-row" style="display: table-row;">
-          <td colspan="3">Line Bonus</td>
-          <td class="sep" id="bottom-player-line-bonus">{{myLineBonus}}</td>
-          <td></td>
-          <td></td>
-          <td class="sep" id="top-player-line-bonus">{{opponentLineBonus}}</td>
-          <td></td>
-        </tr>
-        <tr id="shutout-bonus-row">
-          <td colspan="3">Shutout Bonus</td>
-          <td class="sep" id="bottom-player-shutout-bonus">{{myShutoutBonus}}</td>
-          <td></td>
-          <td></td>
-          <td class="sep" id="top-player-shutout-bonus">{{opponentShutoutBonus}}</td>
-          <td></td>
-        </tr>
-        <tr id="grand-total-row" class="result-row" style="display: table-row;">
-          <td colspan="3">Grand Total</td>
-          <td class="sep" id="bottom-player-grand-total">{{myGrandTotal}}</td>
-          <td></td>
-          <td></td>
-          <td class="sep" id="top-player-grand-total">{{opponentGrandTotal}}</td>
-          <td></td>
-        </tr>
-				{{/if}}
+              <tr class="result-row" id="total-row">
 
-      </tbody>
-    </table>
+                <td colspan="3">Total Score</td>
+                <td class="sep" id="bottom-player-total">{{myTotal}}</td>
+                <td></td>
+                <td></td>
+                <td class="sep" id="top-player-total">{{myOpponentTotal}}</td>
+                <td></td>
+              </tr>
+
+      				{{#if matchFinished}}
+                <tr id="game-bonus-row" class="result-row" style="display: table-row;">
+                  <td colspan="3">Game Bonus</td>
+                  <td class="sep" id="bottom-player-game-bonus">{{myGameBonus}}</td>
+                  <td></td>
+                  <td></td>
+                  <td class="sep" id="top-player-game-bonus">{{opponentGameBonus}}</td>
+                  <td></td>
+                </tr>
+                <tr id="line-bonus-row" style="display: table-row;">
+                  <td colspan="3">Line Bonus</td>
+                  <td class="sep" id="bottom-player-line-bonus">{{myLineBonus}}</td>
+                  <td></td>
+                  <td></td>
+                  <td class="sep" id="top-player-line-bonus">{{opponentLineBonus}}</td>
+                  <td></td>
+                </tr>
+                <tr id="shutout-bonus-row">
+                  <td colspan="3">Shutout Bonus</td>
+                  <td class="sep" id="bottom-player-shutout-bonus">{{myShutoutBonus}}</td>
+                  <td></td>
+                  <td></td>
+                  <td class="sep" id="top-player-shutout-bonus">{{opponentShutoutBonus}}</td>
+                  <td></td>
+                </tr>
+                <tr id="grand-total-row" class="result-row" style="display: table-row;">
+                  <td colspan="3">Grand Total</td>
+                  <td class="sep" id="bottom-player-grand-total">{{myGrandTotal}}</td>
+                  <td></td>
+                  <td></td>
+                  <td class="sep" id="top-player-grand-total">{{opponentGrandTotal}}</td>
+                  <td></td>
+                </tr>
+      				{{/if}}
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button id="closeScoresheet" class='btn btn-default' disabled>Close</button>
+      </div>
+    </div>
   </div>
 </template>

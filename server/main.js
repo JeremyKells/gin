@@ -26,25 +26,17 @@ Meteor.methods({
     var cards = Cards.find({hand: this.userId}, {sort: {position: 1}}).fetch();
     var discards = Cards.find({hand: 'discard'}, {sort: {position: 1}}).fetch();   //needs GameId
     var hv = handVal([], cards);
-    if( (hv.points - hv.cards[hv.cards.length-1].val ) > 10){
+    if( hv.points !== 0 && (hv.points - hv.cards[hv.cards.length-1].val ) > 10){
       throw new Meteor.Error(403, "Cannot Knock: " + hv.points + " - " + hv.cards[hv.cards.length-1].val  + " = " + (hv.points - hv.cards[hv.cards.length-1].val ) );
     }
     if(hv.cards.length > 0){
       Cards.update(hv.cards[hv.cards.length-1]._id, { $set: { hand: 'discard', position: discards.length } });
     }
 
-    //Calculate score, update result
-
-    /*{ createdBy_points: 10,
-    createdBy_bonus: 25,
-    opponent_points: 0,
-    opponent_bonus: 0,
-    result: 'Gin' }*/
-
     if(hv.points === 0){
       Games.update(_id, { $set:{
-                    knocked: this.userId,
-                    status: 'scoreboard' }});
+                    knocked: this.userId}});
+      Meteor.call('HandCompleted');
     } else {
       Games.update(_id, { $set:{
                     knocked: this.userId,
@@ -57,73 +49,21 @@ Meteor.methods({
     Cards.update({_id: card_id}, {$set: {position: newPosition}});
   },
 
+  nextHand: function(_id){  // check this.userId and game.status
+    game = Games.findOne(_id);
+    deal(game);
+    Games.update(_id, { $set:{
+                  status: 'accepted',
+                  }});
+    return _id;
+  },
 
   startGame: function(_id){
     // Shuffle cards, 10 to each player, one to discard pile, rest to deck  - all arrays in game object
     // Mark one player as current turn.
 
     game = Games.findOne(_id);
-    var deck = [];
-    ['hearts', 'diams', 'clubs', 'spades'].map( function(s){
-      ['a', '2', '3', '4','5', '6', '7', '8', '9', '10', 'j', 'q', 'k'].map( function(r) {
-        deck.push({suit : s, rank: r});
-      });
-    });
-
-    var val = function(i){
-      n = parseInt(i);
-      if (isNaN(n)){
-        if(i === 'a'){
-          return 1;
-        }
-        if(i === 'j'){
-          return 11;
-        }
-        if(i === 'q'){
-          return 12;
-        }
-        if(i === 'k'){
-          return 13;
-        }
-      }
-      return n;
-    };
-
-    deck.map(function(i){i.val = val(i.rank);});
-    deck = _.shuffle(deck);
-    deck = _.shuffle(deck);
-
-    var hands = [[], []];
-    for(var j=0; j<2; j++){
-      for (var i=0; i<10; i++){
-        hands[j].push(deck.pop());
-      }
-      hands[j].sort(sorter);
-    }
-
-    takeCard = function(hand, deck){
-      var card = deck.pop();
-      Cards.insert({gameId: _id,
-                    hand: hand,
-                    position: i,    // i is coming from outside this scope, probably should fix.
-                    suit: card.suit,
-                    rank: card.rank,
-                    val: val(card.rank),
-                    showOpponent: false,
-                    });
-    };
-
-    for (var i=0; i<10; i++){      // ugly...
-      takeCard(game.createdBy_id, hands[0]);
-      takeCard(game.opponent_id, hands[1]);
-    }
-
-    i=0;
-    takeCard('discard', deck);
-
-    for (i=0; i<31; i++){
-      takeCard('deck', deck);
-    }
+    shuffle(game);
 
     Games.update(_id, { $set:{
                   status: 'accepted',
@@ -170,42 +110,99 @@ Meteor.methods({
   },
 
   layoff: function(_id){
-    var card = Cards.findOne(_id);
-    var game = Games.findOne(card.gameId);
-    var oppoId = opponentId(game);
-    var oppoHand = Cards.find({hand: oppoId}).fetch();
-    var startHV = handVal([], oppoHand);
-    /*var withoutDeadwood = [].concat.apply([], startHV.melded);*/
-    /*var appendedHV = handVal([], withoutDeadwood);*/
-
-    console.log(startHV.points);
-    oppoHand.push(card);
-    var appendedHV = handVal([], oppoHand);
-    console.log(appendedHV.points);
-
-    /*withoutDeadwood.push(card);
-    var appendedHV = handVal([], withoutDeadwood);*/
-
     console.log("layoff");
     console.log(_id);
-    console.log(appendedHV.points);
+    var card = Cards.findOne(_id);
+    var game = Games.findOne(card.gameId);
+    var oppoId = game.knocked;  //opponentId(game);
+    var oppoHand = Cards.find({hand: oppoId}).fetch();
+    var startHV = handVal([], oppoHand);
+
+    var withoutDeadwood = [].concat.apply([], startHV.melded);
+    withoutDeadwood.push(card);
+    var appendedHV = handVal([], withoutDeadwood);
 
     if(appendedHV.points === 0){
       // can layoff
       console.log("layedOff");
+      console.log(appendedHV.points);
       Cards.update(_id, {$set: {hand: oppoId}});
       return true;
     }
     else{
       console.log("cannot layoff this card");
-      // TODO revisit, try to just rerender view
-      /*Cards.update(_id, {$set: {hand: 'dummy'}});
-      Cards.update(_id, {$set: {hand: this.userId}});*/
+      console.log(appendedHV.points);
       return false;
     }
   },
 
+  HandCompleted: function(){
+      console.log("complete");
 
+      //Calculate score, update result
+      /**/
+
+      var filter = { $or: [{createdBy_id: this.userId}, {opponent_id: this.userId}]};
+      var game = Games.findOne(filter);
+      var createdByCards = Cards.find({gameId: game._id, hand: game.createdBy_id}).fetch();
+      var opponentCards = Cards.find({gameId: game._id, hand: game.opponent_id}).fetch();
+      var createdByHV = handVal([], createdByCards);
+      var opponentHV = handVal([], opponentCards);
+      var knockerHV;
+      var otherHV;
+
+      if (game.knocked === game.createdBy_id){
+        knockerHV = createdByHV;
+        otherHV = opponentHV;
+      } else {
+        knockerHV = opponentHV;
+        otherHV = createdByHV;
+      }
+      var knocker = {};
+      var other = {};
+      var scores = {};
+
+      // check for undercut
+      if(otherHV.points < knockerHV.points){
+        scores.result = 'Undercut';
+        knocker.bonus = 0;
+        knocker.points = 0;
+        other.bonus = 25;
+        other.points = knockerHV.points - otherHV.points;
+      } else{
+        other.bonus = 0;
+        other.points = 0;
+        if(knockerHV.points === 0){
+          if(createdByCards.length + opponentCards.length === 21){
+            scores.result = 'Big Gin';
+            knocker.bonus = 31;
+          } else{
+            scores.result = 'Gin';
+            knocker.bonus = 25;
+          }
+          knocker.points = otherHV.points;
+        }else{
+            scores.result = 'Knocked';
+            knocker.bonus = 0;
+            knocker.points = otherHV.points - knockerHV.points;
+        }
+      }
+
+      if (game.knocked === game.createdBy_id){
+          scores.createdBy_points = knocker.points;
+          scores.createdBy_bonus = knocker.bonus;
+          scores.opponent_points = other.points;
+          scores.opponent_bonus = other.bonus;
+      } else{
+        scores.createdBy_points = other.points;
+        scores.createdBy_bonus = other.bonus;
+        scores.opponent_points = knocker.points;
+        scores.opponent_bonus = knocker.bonus;
+      }
+
+      Games.update(game._id, {$push: {result: scores}, $set: {status: 'scoreboard'} });
+
+  },
 
 
   proposeGame: function(opponentId){
@@ -218,6 +215,7 @@ Meteor.methods({
                   status:         'proposed',
                   createdAt:      new Date(),
                   turn:           [this.userId, opponent._id][Math.floor(Math.random() * 2)],
+                  result:         [],
                 };
     Games.insert(newGame);
     return true;
@@ -229,3 +227,83 @@ Meteor.methods({
   },
 
 });
+
+debug = function(){
+  d8 = Cards.findOne('owpQsnzsoWwzyodN6');
+  d5  = Cards.findOne('rjaWEpsAecFgbErzh');
+  _id = d8._id;
+  card = Cards.findOne(_id);
+  game = Games.findOne(card.gameId);
+  oppoId = game.knocked;  //opponentId(game);
+  oppoHand = Cards.find({hand: oppoId}).fetch();
+  startHV = handVal([], oppoHand);
+  withoutDeadwood = [].concat.apply([], startHV.melded);
+  appendedHV = handVal([], withoutDeadwood);
+};
+
+
+function deal(game){
+  Cards.remove({gameId: game._id});
+  var deck = [];
+  ['hearts', 'diams', 'clubs', 'spades'].map( function(s){
+    ['a', '2', '3', '4','5', '6', '7', '8', '9', '10', 'j', 'q', 'k'].map( function(r) {
+      deck.push({suit : s, rank: r});
+    });
+  });
+  var val = function(i){
+    n = parseInt(i);
+    if (isNaN(n)){
+      if(i === 'a'){
+        return 1;
+      }
+      if(i === 'j'){
+        return 11;
+      }
+      if(i === 'q'){
+        return 12;
+      }
+      if(i === 'k'){
+        return 13;
+      }
+    }
+    return n;
+  };
+
+  deck.map(function(i){i.val = val(i.rank);});
+  deck = _.shuffle(deck);
+  deck = _.shuffle(deck);
+
+  var hands = [[], []];
+  var i;
+  var j;
+  for(j=0; j<2; j++){
+    for (i=0; i<10; i++){
+      hands[j].push(deck.pop());
+    }
+    hands[j].sort(sorter);
+  }
+
+  takeCard = function(hand, deck){
+    var card = deck.pop();
+    Cards.insert({gameId: game._id,
+                  hand: hand,
+                  position: i,    // i is coming from outside this scope, probably should fix.
+                  suit: card.suit,
+                  rank: card.rank,
+                  val: val(card.rank),
+                  showOpponent: false,
+                  });
+  };
+
+  for ( i=0; i<10; i++){      // ugly...
+    takeCard(game.createdBy_id, hands[0]);
+    takeCard(game.opponent_id, hands[1]);
+  }
+
+  i=0;
+  takeCard('discard', deck);
+
+  for (i=0; i<31; i++){
+    takeCard('deck', deck);
+  }
+}

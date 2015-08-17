@@ -1,8 +1,14 @@
-Template.card.helpers({
+
+
+UI.registerHelper('suitSymbol', function(){
+  return "&" + this.suit + ";";
+});
+
+/*Template.card.helpers({
   suitSymbol: function(){
     return "&" + this.suit + ";";
   },
-});
+});*/
 
 // Template.card.rendered = function(){
 //   this.firstNode.onclick = function() {

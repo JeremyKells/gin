@@ -1,10 +1,35 @@
 <template name="player_hand">
-  <div class="playingCards hand rotateHand player_hand">
-    <ul id='playerHand' class="table player_hand">
-      {{#each playerCards}}
-        {{> card}}
+  <div class='flex-container justify-content' id="player-Hand">
+
+    {{#if showMelded}}
+      {{#each melded}}
+        <div class="playingCards player_hand">
+          <ul id='playerhand{{meld.index}}' class="table">
+            {{#each meld.meld}}
+              {{> card}}
+            {{/each}}
+          </ul>
+        </div>
       {{/each}}
-    </ul>
+
+      {{#if deadwood}}
+        <div class="playingCards player_hand">
+          <ul id='playerhanddeadwood' class="table">
+            {{#each deadwood}}
+              {{> card}}
+            {{/each}}
+          </ul>
+        </div>
+      {{/if}}
+    {{else}}
+      <div class="playingCards hand rotateHand player_hand">
+        <ul id='playerHand' class="table player_hand">
+          {{#each playerCards}}
+            {{> card}}
+          {{/each}}
+        </ul>
+      </div>
+    {{/if}}
   </div>
   <div>
     {{valCards}}

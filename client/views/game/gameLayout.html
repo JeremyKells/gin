@@ -6,9 +6,9 @@
   {{> loginButtons}} vs {{opponent_name}}
 
   <button class="btn btn-default" id="deletegame">Delete Game</button>
-  <div class='flex-container column'>
+  <div id='gameLayout' class='flex-container column'>
     <div id="name">
-      <h3>It's {{whosTurn}}</h3>
+      <h3>{{whosTurn}}</h3>
     </div>
     {{>opponent_hand}}
 

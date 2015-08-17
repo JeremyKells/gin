@@ -1,4 +1,29 @@
 Template.player_hand.helpers({
+    melded: function(){
+      var cards = Cards.find({hand: Meteor.userId()}, {sort: {position: 1}});
+      var hv = handVal([], cards.fetch());
+      return hv.melded.map( function(i, idx){return {meld: i, index: idx}; });
+      /*return hv.melded;*/
+    },
+    deadwood: function(){
+      var cards = Cards.find({hand: Meteor.userId()}, {sort: {position: 1}});
+      var hv = handVal([], cards.fetch());
+      return hv.cards;
+    },
+    points: function(){
+      var cards = Cards.find({hand: Meteor.userId()}, {sort: {position: 1}});
+      var hv = handVal([], cards.fetch());
+      return hv.points;
+    },
+    meld: function(){
+      return this;
+    },
+    showMelded: function(){
+      game = Games.findOne({});
+      if (game.status === 'knocked'){      // probably more
+        return true;
+      }
+    },
     numCards: function() {
         return Session.get('numCards');
     },
@@ -37,9 +62,25 @@ newPosition = function(el) {
     }
 };
 
-makePlayerHandSortable = function() {
-    delete playerHand;
-    playerHand = Sortable.create(playerHand, {
+
+makePlayerHandSortable = function(){
+  delete playerHand;
+  delete playerHand0;
+  delete playerHand1;
+  delete playerHand2;
+  delete playerhanddeadwood;
+
+  ['playerHand', 'playerhand0', 'playerhand1', 'playerhand2', 'playerhanddeadwood'].map(function(i){
+    try{
+      makeSortable(document.getElementById(i) );
+    } catch(err){}
+
+    });
+  };
+
+makeSortable = function(hand) {
+    /*playerHand = Sortable.create(playerHand, {*/
+    Sortable.create(hand, {
         group: {
             name: "hands",
             put: true,
@@ -63,16 +104,19 @@ makePlayerHandSortable = function() {
         },
         onRemove: function(evt) {
             if (Games.findOne().status === "knocked") {
+
                 Meteor.call('layoff', Blaze.getData(evt.item)._id, function(error, result) {
                     if (result === false) {
-                        var ph = $('div.player_hand')[0];
-                        var v = Blaze.getView(ph);
-                        var data = Blaze.getData(ph);
-                        var parent = ph.parentNode;
+                        el = $('#gameLayout')[0];
+                        var v = Blaze.getView(el);
+                        var data = Blaze.getData(el);
+                        var parent = el.parentNode;
+                        parent.removeChild(el);
                         Blaze.remove(v);
-                        Blaze.renderWithData(Template.player_hand, data, parent);
+                        Blaze.renderWithData(Template.gameLayout, data, parent);
                     }
                 });
+                evt.item.parentNode.removeChild(evt.item);
             }
         },
         onStart: function(evt) {
@@ -83,7 +127,7 @@ makePlayerHandSortable = function() {
             }
         },
         onSort: function(evt) {
-            console.log('onStart.playerHand:', evt);
+            console.log('onSort.playerHand:', evt);
         },
         onEnd: function(evt) {
             //   console.log('onEnd.playerHand:', evt);

@@ -15,7 +15,6 @@ remaining = function(meld, cards){
   return copy;
 };
 
-
 sorter = function (a, b){
   if(a.val < b.val)
     return -1;
