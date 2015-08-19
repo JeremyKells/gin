@@ -63,7 +63,7 @@ Meteor.methods({
     // Mark one player as current turn.
 
     game = Games.findOne(_id);
-    shuffle(game);
+    deal(game);
 
     Games.update(_id, { $set:{
                   status: 'accepted',
